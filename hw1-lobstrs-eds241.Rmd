@@ -31,7 +31,7 @@ knitr::opts_chunk$set(eval=FALSE, warning = FALSE, message = FALSE )
 -  Your knitted presentation should meet the quality you'd submit to research colleagues or feel confident sharing publicly. Refer to the rubric for details about presentation standards.
 
 
-**Assignment submission (YOUR NAME):** ______________________________________
+**Assignment submission:** Megan Hessel 
 
 
 ----------------------------------------------------------------------
@@ -47,6 +47,7 @@ library(jtools)
 library(gt)
 library(gtsummary)
 library(interactions) 
+library(dplyr)
 
 ```
 
@@ -62,7 +63,7 @@ library(interactions)
 
 You're about to dive into some deep data collected from five reef sites in Santa Barbara County, all about the abundance of California spiny lobsters! 🦞 Data was gathered by divers annually from 2012 to 2018 across Naples, Mohawk, Isla Vista, Carpinteria, and Arroyo Quemado reefs.
 
-Why lobsters? Well, this sample provides an opportunity to evaluate the impact of Marine Protected Areas (MPAs) established on January 1, 2012 (Reed, 2019). Of these five reefs, Naples, and Isla Vista are MPAs, while the other three are not protected (non-MPAs). Comparing lobster health between these protected and non-protected areas gives us the chance to study how commercial and recreational fishing might impact these ecosystems.
+Why lobsters? Well, this sample provides an opportunity to evaluate the impact of Marine Protected Areas (MPAs) established on January 1, 2012 (Reed, 2019). Of these five reefs, *Naples, and Isla Vista are MPAs,* while the other three are not protected (non-MPAs). Comparing lobster health between these protected and non-protected areas gives us the chance to study how commercial and recreational fishing might impact these ecosystems.
 
 We will consider the MPA sites the `treatment` group and use regression methods to explore whether protecting these reefs really makes a difference compared to non-MPA sites (our control group). In this assignment, we’ll think deeply about which causal inference assumptions hold up under the research design and identify where they fall short. 
 
@@ -77,6 +78,8 @@ Let’s break it down step by step and see what the data reveals! 📊
 
 **a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is ceteris paribus or whether selection bias is likely (be specific!).  
 
+There might be some selection bias due to the sites' differing in current intensity and patterns, anthropomorphic activity, and temperature. Point Conception, which is just West of this map, is where the cold, subarctic Northern California current and warm Southern California current meet, creating upwhelling. Therefore, Eastern sites might be warmer and facing more current strength than the Western sites due to the mixing and upwhelling West of Santa Barbara. Additionally, Naples, IV, and Monhawk are closer to the city; therefore, those sites might face more pollution and disturbance. However, while sites differ on other confounding variables, these sites selections are still useful and close to ceters paribus. Control groups are both east and west of the treatment group, minimizing the effect of the different current and temperature pressures. All sites are very close to Santa Barbara. Due to aquatic systems spacial autocorrelation, pollution in one location will most likely be in other locations. Therefore, in this example, there might be some selection bias, but it is pretty close to celeris paribus as locations face similar conditions except MPA status. 
+
 ------------------------------------------------------------------------
 
 #### Step 2: Read & wrangle data
@@ -88,7 +91,9 @@ Let’s break it down step by step and see what the data reveals! 📊
 ```{r}
 # HINT: check for coding of missing values (`na = "-99999"`)
 
-rawdata <- 
+rawdata <- read_csv(here::here("data", "spiny_abundance_sb_18.csv"), 
+                    na = '-99999') %>% # converting '-9999' values to NA 
+    janitor::clean_names()
 
 ```
 
@@ -97,9 +102,24 @@ rawdata <-
     "Arroyo Quemado", "Carpenteria", "Mohawk", "Isla Vista",  "Naples"
 
 ```{r}
+# Creating the ordered wanted 
+custom_order <- c("Arroyo Quemado", "Carpenteria", "Mohawk", "Isla Vista",  "Naples")
 
-tidydata <- 
-    
+# Making a `reef` from `site`
+tidydata <- rawdata %>% 
+    mutate(reef = case_when(
+        rawdata$site == "AQUE" ~ 'Arroyo Quemado',
+        rawdata$site == "CARP" ~ 'Carpenteria', 
+        rawdata$site == "MOHK" ~ 'Mohawk',
+        rawdata$site == "IVEE" ~ 'Isla Vista',
+        rawdata$site == "NAPL" ~ 'Naples'
+    ))
+# Making it a factor with the ordered wanted 
+tidydata$reef <- factor(tidydata$reef, levels = custom_order)
+
+# Checking the level order 
+levels(tidydata$reef)
+
 ```
 
 Create new `df` named `spiny_counts` 
@@ -115,9 +135,35 @@ Create new `df` named `spiny_counts`
 ```{r}
 #HINT(d): Use `group_by()` & `summarize()` to provide the total number of lobsters observed at each site-year-transect row-observation. 
 
+spiny_counts <- tidydata %>% 
+    group_by(site, year, transect) %>% 
+    summarise(obs_lob = sum(c(count, num_ao), na.rm = TRUE), # Number of lobsters observed 
+              mean_size = mean(size_mm, na.rm = TRUE)) %>% 
+    ungroup()
+
+# count = Total number of lobsters of this size in the lobster transect	
+# num_ao = Number of lobster that only its antenna was visible
+
+
 #HINT(e): Use `case_when()` to create the 3 new variable columns
 
-spiny_counts <- 
+spiny_counts <- spiny_counts %>% 
+    mutate(mpa = case_when(
+        spiny_counts$site == 'AQUE' ~ 'non_MPA',
+        spiny_counts$site == 'CARP' ~ 'non_MPA', 
+        spiny_counts$site == 'MOHK' ~ 'non_MPA',
+        spiny_counts$site == 'IVEE' ~ 'MPA',
+        spiny_counts$site == 'NAPL' ~ 'MPA'
+))
+
+# Making mpa and treat a factor with 0 (non_MPA) and 1 (MPA)
+custom_order <- c("non_MPA", "MPA")
+spiny_counts$mpa <- factor(spiny_counts$mpa, levels = custom_order)
+spiny_counts$treat <- factor(spiny_counts$mpa, levels = custom_order, labels = c(0, 1))
+
+# Checking levels of factors 
+levels(spiny_counts$mpa)
+levels(spiny_counts$treat)
 
 ```
 
