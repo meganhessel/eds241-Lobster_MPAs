@@ -50,6 +50,7 @@ library(ggridges)
 library(paletteer)
 library(gtsummary)
 library(gt)
+library(MASS)
 
 
 ```
@@ -154,11 +155,11 @@ spiny_counts <- spiny_counts %>%
 
 # Making `mpa` and `treat` a factor with 0 / non_MPA and 1 / MPA
 custom_order <- c("non_MPA", "MPA")
-spiny_counts$mpa <- factor(spiny_counts$mpa, levels = custom_order)
+#spiny_counts$mpa <- factor(spiny_counts$mpa, levels = custom_order)
 spiny_counts$treat <- factor(spiny_counts$mpa, levels = custom_order, labels = c(0, 1))
 
 # Checking levels of factors 
-levels(spiny_counts$mpa)
+#levels(spiny_counts$mpa)
 levels(spiny_counts$treat)
 
 ```
@@ -197,8 +198,8 @@ color_palette <- c('#0a6664', '#17BEBBFF', '#D4F4DDFF', '#D62246FF', '#4B1D3FFF'
 # Density graph by reef site 
 spiny_counts %>% 
     mutate(site = factor(site, 
-                         levels = c("AQUE", "CARP", "MOHK", "IVEE","NAPL"), 
-                         labels = custom_order)) %>% 
+                         levels = c("AQUE", "CARP", "MOHK", "IVEE","NAPL") 
+                         )) %>% 
     ggplot(aes(x = obs_lob, y = site, fill = site)) + 
     geom_density_ridges( alpha = 0.5) + 
     theme_gray() + 
@@ -226,7 +227,7 @@ ggplot(spiny_counts, aes(x = mpa, y = obs_lob, fill = mpa)) +
          caption = "Source: Reed, 2019") + 
     geom_boxplot(width = 0.06, 
                  outlier.size = 0.55, 
-                 fill = "grey")
+                 fill = "grey90")
     
 
 ```
@@ -245,7 +246,6 @@ ggplot() +
                               y = obs_lob),
                 width = 0.25, 
                 color = "grey15") + 
-    theme_grey() + 
     labs(x = "Year", 
          y = "Lobster Abundance", 
          title = 'California Spiny Lobster Abundance Overtime', 
@@ -255,7 +255,8 @@ ggplot() +
                               y = mean_count),
                 width = 0.25, 
                 color = "red2", 
-                size = 1.7)
+                size = 1.7) + 
+        theme_grey() 
     
 
 ```
@@ -265,17 +266,30 @@ Create a plot of lobster **size** :
 4)  You choose the grouping variable(s)!
 
 ```{r}
-# plot 1: ....
+# Calculate median 
+median_group <- spiny_counts %>% 
+    group_by(mpa) %>% 
+    summarise(median = median(mean_size, na.rm = TRUE, .group = drop))
 
-spiny_counts %>% 
-ggplot(aes(x = mean_size, fill = mpa)) + 
-    geom_density(alpha = 0.4) + 
-    scale_fill_manual(values = c('#488f30', '#ffad76')) + 
-    labs(x = "Lobster Size (mm)", 
+# Plot with medians 
+ggplot() + 
+    geom_density(
+        data = spiny_counts,
+        mapping = aes(x = mean_size, fill = mpa),
+        alpha = 0.4) + 
+    theme_minimal() +
+    geom_vline(data = median_group,
+        mapping = (aes(xintercept = median, 
+                       color = mpa)), 
+        linetype = "dashed") + 
+    scale_color_manual(values = c("darkgreen", "darkorange3"))+
+    scale_fill_manual(values = c("#488f30", "#ffad76")) + 
+    labs(x = "Lobster Mean Size (mm)", 
          y = "Density", 
          title = "California Spiny Lobster Size in MPA and non-MPA Sites", 
-         fill = "MPA Status") + 
-    theme_minimal()
+         fill = "MPA Status", 
+         color = "Size Median Values") 
+
     
 ```
 
@@ -286,10 +300,13 @@ spiny_counts %>%
     rename(lobster_count = obs_lob) %>% 
     gtsummary::tbl_summary(
         by = treat, 
-        include = c(lobster_count, mean_size), 
+        include = c(lobster_count, mean_size, site), 
         statistic = list(all_continuous() ~ '{mean} ({sd})')
     ) %>% 
-    add_p()
+    add_p() %>% 
+    # Add header labels 
+    modify_header(label ~ "**Variable**") %>%
+    modify_spanning_header(c("stat_1", "stat_2") ~ "**Treatment**") 
 
 
 ```
@@ -311,11 +328,14 @@ summ(m1_ols, model.fit = FALSE)
 
 ```
 
+*Intercept:* With no treatment (in a non-MPA site), there is expected to be an average of ~22.75 lobsters. 
+
+*Coefficient Estimation:* With treatment (MPA protection), lobsters count is expected to increase by approximately 5.36 lobsters. 
+
+
 **c.** Check the model assumptions using the `check_model` function from the `performance` package
 
 **d.** Explain the results of the 4 diagnostic plots. Why are we getting this result?
-
-**DID NOT DO** !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ```{r}
 check_model(m1_ols,  check = "qq" )
@@ -333,90 +353,90 @@ check_model(m1_ols, check = "homogeneity")
 check_model(m1_ols, check = "pp_check")
 ```
 
+
+By the `check_model` graphs, the data is not normality distributed (with a leptokurtic skewed distribution) and there is no equal variance (heterogeneity). These violate OSL model's assumptions. 
+
 ------------------------------------------------------------------------
 
 #### Step 5: Fitting GLMs
 
-**a.** Estimate a Poisson regression model using the `glm()` function
+**a.** Estimate a *Poisson regression model* using the `glm()` function
 
 **b.** Interpret the predictor coefficient in your own words. Use full sentences and write your interpretation of the results to be as clear as possible to a non-academic audience.
 
--   The estimation for `treat` (0.21) is the expected difference between lobster counts in MPA and non-MPA sites. Poisson regression has a log link function. Therefore, exponentiating the estimation value will give us needed information: the exp(0.21) ≈ 1.234. Compared to non-MPA sites, protected area are expected to have about 23% more lobsters.
+exp(3.12) = 22.64638 (intercept)
+exp(0.21) = 1.233678 (est coefficient)
+With no treatment (non-MPA locations), the lobster count is expected to be ~23 on average. With treatment (MPA protection), lobster count is expected to increase by 23% which is statistically significant. 
+
+$$ 
+# Yield Precent Change
+(exp(estimation) - 1) * 100
+$$ 
 
 **c.** Explain the statistical concept of dispersion and overdispersion in the context of this model.
 
--   Dispersion is when the mean and variance are similar in portion to each other. Overdispersion is when there is greater variance than expected and thus not portional to the mean. Poisson is a statistical test where mean and variance must be proportional; overdispersion in Poisson can cause misleading test statistics and standard errors. A dispersion ratio of 67.033 indicates overdispersion which violates the Poisson assumption.
+Dispersion is when the mean and variance are similar in portion to each other. Overdispersion is when there is greater variance than expected and thus not proportional to the mean. Poisson is a statistical test where mean and variance must be proportional; overdispersion in Poisson can cause misleading test statistics and standard errors. A dispersion ratio of 67.033 indicates overdispersion which violates the Poisson assumption.
 
 **d.** Compare results with previous model, explain change in the significance of the treatment effect
 
--   In the OSL model, there is no statistical significance in lobster counts between MPA and non-MPA sites. In the Poisson model, there is a statistical significance in lobster abundance between treatments. The Poisson model is better fitted for count data, and therefore give more accurate results.
-
-```{r}
-#HINT1: Incidence Ratio Rate (IRR): Exponentiation of beta returns coefficient which is interpreted as the 'percent change' for a one unit increase in the predictor 
-
-#HINT2: For the second glm() argument `family` use the following specification option `family = poisson(link = "log")`
-
-m2_pois <- glm(obs_lob ~ treat, data = spiny_counts, family = poisson(link = "log"))
-
-summ(m2_pois)
-
-check_overdispersion(m2_pois)
-```
+In the OSL model, there is no statistical significance in lobster counts between MPA and non-MPA sites. In the Poisson model, there is a statistical significance in lobster abundance between treatments. The Poisson model is better fitted for count data, and therefore give more accurate results.
 
 **e.** Check the model assumptions. Explain results.
 
--   This Poisson model shows overdispersion (dispersion ration of 67.033) and zero-inflation (27 observed zeros). Therefore, the Poisson model is inappropriate for this data set.
+This data have overdispersion (dispersion ration of 67.033) and zero-inflation (27 observed zeros) which breaks Poisson model assumptions. Therefore, the Poisson model is inappropriate for this data set.
 
 **f.** Conduct tests for over-dispersion & zero-inflation. Explain results.
 
 ```{r}
+# Poisson model 
+
+m2_pois <- glm(obs_lob ~ treat, data = spiny_counts, family = poisson(link = "log"))
+
+summ(m2_pois, model.fit = FALSE)
+
+```
+
+```{r}
+# Checking assumptions
 check_model(m2_pois)
-```
 
-```{r}
 check_overdispersion(m2_pois)
-```
 
-```{r}
 check_zeroinflation(m2_pois)
+
 ```
 
-**g.** Fit a negative binomial model using the function glm.nb() from the package `MASS` and check model diagnostics
+**g.** Fit a *negative binomial model* using the function glm.nb() from the package `MASS` and check model diagnostics
 
 **h.** In 1-2 sentences explain rationale for fitting this GLM model.
 
--   Negative binomial model is more flexible than the Poisson model because it accounts for overdispersion by adding a dispersion parameter and good with excess zeros. Because this data has overdispersion and is zero-inflated, it is more appropriately fitted for the negative binomial model.
+Negative binomial model is more flexible than the Poisson model because it accounts for overdispersion by adding a dispersion parameter. Because this data has overdispersion, it is more appropriately fitted for the negative binomial model.
 
 **i.** Interpret the treatment estimate result in your own words. Compare with results from the previous model.
 
--   The treatment coefficient for the negative binomial model is 0.21 (exp(0.21) = 1.234) which explains MPA's have a 23% increase in expected lobster counts compared to non-protected area. The estimation is the same as the Poisson model. However unlike the Poisson model, the negative binomial shows the treatment effect is not statistically significant (p = 0.22). All models suggest lobster abundance is higher in MPAs, but only Poisson shows statistically significant. Poission results should be treated with caution because the assumptions for Poisson are violated which can lead to misleading P-values.
+exp(3.12) = 22.64638
+exp(0.21) = 1.233678
+
+In not protected areas, the expected lobster count is ~23 on average. In MPA sites, there is a expected increase of 23% lobsters, but this relationships is not significant. 
+
+All models suggest lobster abundance is higher in Marine Protected Areas (MPAs). Specifically, the estimations from the poisson and negative binomial models are very similar. The Pvalues are the main difference between the models. Poisson shows statistical significance while the negative binomal model and linear regression does not. The poission P-value result should be treated with caution because the assumptions for Poisson are violated which can lead to misleading P-values. Similarly, the linear regession assumptions are violated which can cause unreliable results. 
+
 
 ```{r}
-library(MASS) ## NOTE: The `select()` function is masked. Use: `dplyr::select()` ##
-```
-
-```{r}
-
-# NOTE: The `glm.nb()` function does not require a `family` argument
-
 # Negative Binomal 
-m3_nb <- glm.nb(obs_lob ~ treat, data = spiny_counts)
-summ(m3_nb)
-```
+m3_nb <- glm.nb(obs_lob ~ treat, data = spiny_counts) # `glm.nb()`  does not require a `family` argument
 
+summ(m3_nb, model.fit = FALSE)
+```
 ```{r}
 check_overdispersion(m3_nb)
-```
 
-```{r}
 check_zeroinflation(m3_nb)
 ```
 
 ```{r}
 check_predictions(m3_nb)
-```
 
-```{r}
 check_model(m3_nb)
 ```
 
@@ -428,10 +448,9 @@ check_model(m3_nb)
 
 **c.** Write a short paragraph comparing the results. Is the treatment effect `robust` or stable across the model specifications.
 
--   In all three models, the treatment coefficient is positive showing more lobsters in MPA sites than non-MPA locations. Yet, the P-values differed between models. The OLS model shows high uncertainty in its positive prediction and no statistical significance. The OLS is a poor model for the count dataset, seen by the high uncertainty. The Poisson model's p-value shows statistical significance. However, the overdispersion and zero-inflated nature of the count data makes Poisson an inadequate model. Lastly, the negative binomial accounts for over dispersion and zero values, making the model a more appropriate fit. The negative binomial model estimates a positive treatment effect, but no statistical significance. In conclusion, the estimates are all consistent. However, statistical significance is not robust across all the models specifications.
+In all three models, the treatment coefficient is positive, meaning there is an increases of lobster abundance in the treatment sites (MPAs) compared to the untreated (unprotected) areas. Additionally, the estimates themselves were all very similar between models. The primary distinctions between the models are the P-values and standard deviations. The OLS model shows high uncertainty in its positive prediction and no statistical significance. The OLS is a poor model for the count dataset, seen by the high uncertainty. The Poisson model's p-value shows statistical significance. However, the over-dispersion and zero-inflated nature of the count data makes Poisson an inadequate model. Lastly, the negative binomial accounts for over-dispersion and zero values, making the model a more appropriate fit. The negative binomial model estimates a positive treatment effect, but no statistical significance. In conclusion, the estimates are all consistent. However, statistical significance is not robust across all the models specifications.
 
 ```{r}
-
 export_summs(m1_ols, m2_pois, m3_nb,
              model.names = c("OLS","Poisson", "NB"),
              statistics = "none")
@@ -451,7 +470,12 @@ export_summs(m1_ols, m2_pois, m3_nb,
 
 **c.** Take a look at the regression output. Each coefficient provides a comparison or the difference in means for a specific sub-group in the data. Informally, describe the what the model has estimated at a conceptual level (NOTE: you do not have to interpret coefficients individually)
 
+By adding `year` as an additive and multiplicative variable, we are now examining the change of lobster counts in MPA vs non-MPA sites *overtime*. The reference year is 2012. The year coefficients are the expected average change of lobster abundance from 2012 in unprotected sites. The `treat` coefficient explains the expected change of lobster abundance between treatment (MPAs) and non-treatment (non-MPA) sites - the effect of the treatment. The interaction between the predictors examines if lobster counts in MPAs are changing relative to non-MPA sites in each year.
+
+
 **d.** Explain why the main effect for treatment is negative? \*Does this result make sense?
+
+The treatment coefficient examines the change of lobster counts when the year is fixed (fixed to the reference year - 2012). The results show, in 2012, the MPA sites had on average 82% less lobsters than the non-MPA sites. MPA lobster abundance increases in the later years which is seen in the interaction terms, not the treatment coefficient. These results make sense as MPA are designed to increase biodiversity overtime. 
 
 ```{r}
 
@@ -472,9 +496,14 @@ summ(m5_fixedeffs, model.fit = FALSE)
 
 **f.** Re-evaluate your responses (c) and (b) above.
 
+My previous explanation of the terms is exemplified in the `interact_plot()`. In 2012 (the reference year), MPA sites had considerably less lobster abundance. As time continued, lobster counts increased overall, especially in treatment/protected areas (with a drop in the population in 2016 at MPA sites). 
+
 ```{r}
 
-interact_plot(m5_fixedeffs, pred = year, modx = treat,
+# What teacher did 
+interact_plot(model = m5_fixedeffs, 
+              pred = year, # Predictor variable
+              modx = treat, # Moderator variable
               outcome.scale = "link") # NOTE: y-axis on log-scale
 
 # HINT: Change `outcome.scale` to "response" to convert y-axis scale to counts
@@ -482,15 +511,30 @@ interact_plot(m5_fixedeffs, pred = year, modx = treat,
 
 **g.** Using `ggplot()` create a plot in same style as the previous `interaction plot`, but displaying the original scale of the outcome variable (lobster counts). This type of plot is commonly used to show how the treatment effect changes across discrete time points (i.e., panel data).
 
-The plot should have... - `year` on the x-axis - `counts` on the y-axis - `mpa` as the grouping variable
-
 ```{r}
-# Hint 1: Group counts by `year` and `mpa` and calculate the `mean_count`
-# Hint 2: Convert variable `year` to a factor
+# Making the dataframe 
+plot_counts <- ff_counts %>% 
+    group_by(year, treat) %>% 
+    summarise(mean_count = mean(obs_lob)) %>% 
+    ungroup()
 
-plot_counts <- 
+# Plotting 
+plot_counts %>%
+    mutate(mpa = recode(treat, # Rename mpa characters 
+                        `0` = "non-MPA", 
+                        `1` = "MPA")) %>% 
+    ggplot(aes(x = year, y = mean_count, color = mpa, group = mpa)) + # plot 
+    geom_line(linewidth = 1)+ 
+    geom_point(size = 3) + 
+    scale_color_manual(values = c("#ffad76", "#488f30")) + 
+    theme_minimal() + 
+    labs(
+        title = "Lobster Abundance Overtime", 
+        x = "Year", 
+        y = "Mean Lobster Count", 
+        color = "MPA Status"
+    )
 
-# plot_counts %>% ggplot() ...
 ```
 
 ------------------------------------------------------------------------
