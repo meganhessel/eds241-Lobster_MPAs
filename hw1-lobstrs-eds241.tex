@@ -1,0 +1,999 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Assignment 1},
+  pdfauthor={Megan Hessel},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Assignment 1}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{California Spiny Lobster (\emph{Panulirus Interruptus}):
+Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in
+Santa Barbara County}
+\author{Megan Hessel}
+\date{1/8/26}
+
+\begin{document}
+\maketitle
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/spiny2.jpg}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Assignment Instructions:}\label{assignment-instructions}
+
+\begin{itemize}
+\item
+  Working with partners to troubleshoot code and concepts is encouraged!
+  If you work with a partner, please list their name next to yours at
+  the top of your assignment so Annie and I can easily see who
+  collaborated.
+\item
+  All written responses must be written independently (\textbf{in your
+  own words}).
+\item
+  Please follow the question prompts carefully and include only the
+  information each question asks in your submitted responses.
+\item
+  Submit both your knitted document and the associated
+  \texttt{RMarkdown} or \texttt{Quarto} file.
+\item
+  Your knitted presentation should meet the quality you'd submit to
+  research colleagues or feel confident sharing publicly. Refer to the
+  rubric for details about presentation standards.
+\end{itemize}
+
+\textbf{Assignment submission:} Megan Hessel
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(here)}
+\FunctionTok{library}\NormalTok{(janitor)}
+\FunctionTok{library}\NormalTok{(estimatr)  }
+\FunctionTok{library}\NormalTok{(performance)}
+\FunctionTok{library}\NormalTok{(jtools)}
+\FunctionTok{library}\NormalTok{(gt)}
+\FunctionTok{library}\NormalTok{(gtsummary)}
+\FunctionTok{library}\NormalTok{(interactions) }
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(ggridges)}
+\FunctionTok{library}\NormalTok{(paletteer)}
+\FunctionTok{library}\NormalTok{(gtsummary)}
+\FunctionTok{library}\NormalTok{(gt)}
+\FunctionTok{library}\NormalTok{(MASS)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{DATA SOURCE:}\label{data-source}
+
+\begin{quote}
+\href{https://doi.org/10.6073/pasta/a593a675d644fdefb736750b291579a0}{Reed
+D. 2019. SBC LTER: Reef: Abundance, size and fishing effort for
+California Spiny Lobster (Panulirus interruptus), ongoing since 2012.
+Environmental Data Initiative.} Data accessed 11/17/2019.
+\end{quote}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{\texorpdfstring{\textbf{Introduction}}{Introduction}}\label{introduction}
+
+You're about to dive into some deep data collected from five reef sites
+in Santa Barbara County, all about the abundance of California spiny
+lobsters! 🦞 Data was gathered by divers annually from 2012 to 2018
+across Naples, Mohawk, Isla Vista, Carpinteria, and Arroyo Quemado
+reefs.
+
+Why lobsters? Well, this sample provides an opportunity to evaluate the
+impact of Marine Protected Areas (MPAs) established on January 1, 2012
+(Reed, 2019). Of these five reefs, \emph{Naples, and Isla Vista are
+MPAs,} while the other three are not protected (non-MPAs). Comparing
+lobster health between these protected and non-protected areas gives us
+the chance to study how commercial and recreational fishing might impact
+these ecosystems.
+
+We will consider the MPA sites the \texttt{treatment} group and use
+regression methods to explore whether protecting these reefs really
+makes a difference compared to non-MPA sites (our control group). In
+this assignment, we'll think deeply about which causal inference
+assumptions hold up under the research design and identify where they
+fall short.
+
+Let's break it down step by step and see what the data reveals! 📊
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/map-5reefs.png}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 1: Anticipating potential sources of selection
+bias}\label{step-1-anticipating-potential-sources-of-selection-bias}
+
+\textbf{a.} Do the control sites (Arroyo Quemado, Carpenteria, and
+Mohawk) provide a strong counterfactual for our treatment sites (Naples,
+Isla Vista)? Write a paragraph making a case for why this comparison is
+ceteris paribus or whether selection bias is likely (be specific!).
+
+There might be some selection bias due to the sites' differing in
+current intensity and patterns, anthropomorphic activity, and
+temperature. Point Conception (which is just West of this map) is where
+the cold, subarctic Northern California current and warm Southern
+California current meet, creating upwhelling. Therefore, Eastern sites
+might be warmer and facing more current strength than the Western sites
+due to the mixing and upwhelling West of Santa Barbara. Additionally,
+Naples, IV, and Monhawk are closer to the city; therefore, those sites
+might face more pollution and disturbance. However, while sites differ
+on several confounding variables, these sites selections are still
+useful and close to \emph{ceters paribus}. Control groups are both east
+and west of the treatment group, minimizing the effect of the different
+current and temperature pressures. All sites are very close to Santa
+Barbara. Due to aquatic systems spatial autocorrelation, pollution in
+one location will most likely be in other locations. Therefore, in this
+example, there might be some selection bias, but it is pretty close to
+\emph{celeris paribus} as locations face similar conditions except MPA
+status.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 2: Read \& wrangle data}\label{step-2-read-wrangle-data}
+
+\textbf{a.} Read in the raw data from the ``data'' folder named
+\texttt{spiny\_abundance\_sb\_18.csv}. Name the data.frame
+\texttt{rawdata}
+
+\textbf{b.} Use the function \texttt{clean\_names()} from the
+\texttt{janitor} package
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# HINT: check for coding of missing values (\textasciigrave{}na = "{-}99999"\textasciigrave{})}
+
+\NormalTok{rawdata }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(here}\SpecialCharTok{::}\FunctionTok{here}\NormalTok{(}\StringTok{"data"}\NormalTok{, }\StringTok{"spiny\_abundance\_sb\_18.csv"}\NormalTok{), }
+                    \AttributeTok{na =} \StringTok{\textquotesingle{}{-}99999\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# converting \textquotesingle{}{-}9999\textquotesingle{} values to NA }
+\NormalTok{    janitor}\SpecialCharTok{::}\FunctionTok{clean\_names}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{c.} Create a new \texttt{df} named \texttt{tidyata}. Using the
+variable \texttt{site} (reef location) create a new variable
+\texttt{reef} as a \texttt{factor} and add the following labels in the
+order listed (i.e., re-order the \texttt{levels}):
+
+\begin{verbatim}
+"Arroyo Quemado", "Carpenteria", "Mohawk", "Isla Vista",  "Naples"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Creating the ordered wanted }
+\NormalTok{custom\_order }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Arroyo Quemado"}\NormalTok{, }\StringTok{"Carpenteria"}\NormalTok{, }\StringTok{"Mohawk"}\NormalTok{, }\StringTok{"Isla Vista"}\NormalTok{, }\StringTok{"Naples"}\NormalTok{)}
+
+\CommentTok{\# Making a \textasciigrave{}reef\textasciigrave{} a factor from \textasciigrave{}site\textasciigrave{} col}
+\NormalTok{tidydata }\OtherTok{\textless{}{-}}\NormalTok{ rawdata }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{reef =} \FunctionTok{factor}\NormalTok{(rawdata}\SpecialCharTok{$}\NormalTok{site, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"AQUE"}\NormalTok{, }\StringTok{"CARP"}\NormalTok{, }\StringTok{"MOHK"}\NormalTok{, }\StringTok{"IVEE"}\NormalTok{,}\StringTok{"NAPL"}\NormalTok{), }\AttributeTok{labels =}\NormalTok{ custom\_order))}
+
+
+\CommentTok{\# Checking the level order }
+\FunctionTok{levels}\NormalTok{(tidydata}\SpecialCharTok{$}\NormalTok{reef)}
+\end{Highlighting}
+\end{Shaded}
+
+Create new \texttt{df} named \texttt{spiny\_counts}
+
+\textbf{d.} Create a new variable \texttt{counts} to allow for an
+analysis of lobster counts where the unit-level of observation is the
+total number of observed lobsters per \texttt{site}, \texttt{year} and
+\texttt{transect}.
+
+\begin{itemize}
+\tightlist
+\item
+  Create a variable \texttt{mean\_size} from the variable
+  \texttt{size\_mm}
+\item
+  NOTE: The variable \texttt{counts} should have values which are
+  integers (whole numbers).
+\item
+  Make sure to account for missing cases (\texttt{na})!
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#HINT(d): Use \textasciigrave{}group\_by()\textasciigrave{} \& \textasciigrave{}summarize()\textasciigrave{} to provide the total number of lobsters observed at each site{-}year{-}transect row{-}observation. }
+
+\NormalTok{spiny\_counts }\OtherTok{\textless{}{-}}\NormalTok{ tidydata }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{group\_by}\NormalTok{(site, year, transect) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{summarise}\NormalTok{(}\AttributeTok{obs\_lob =} \FunctionTok{sum}\NormalTok{(count, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\CommentTok{\# Number of lobsters observed }
+              \AttributeTok{mean\_size =} \FunctionTok{mean}\NormalTok{(size\_mm, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{ungroup}\NormalTok{()}
+
+\CommentTok{\# \textasciigrave{}count\textasciigrave{} = Total number of lobsters of this size in the lobster transect   }
+\CommentTok{\# \textasciigrave{}num\_ao\textasciigrave{} = Number of lobster that only its antenna was visible}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{e.} Create a new variable \texttt{mpa} with levels \texttt{MPA}
+and \texttt{non\_MPA}. For our regression analysis create a numerical
+variable \texttt{treat} where MPA sites are coded \texttt{1} and
+non\_MPA sites are coded \texttt{0}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#HINT(e): Use \textasciigrave{}case\_when()\textasciigrave{} to create the 3 new variable columns}
+
+\NormalTok{spiny\_counts }\OtherTok{\textless{}{-}}\NormalTok{ spiny\_counts }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{mpa =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{        site }\SpecialCharTok{==} \StringTok{\textquotesingle{}AQUE\textquotesingle{}} \SpecialCharTok{|}\NormalTok{ site }\SpecialCharTok{==} \StringTok{\textquotesingle{}CARP\textquotesingle{}} \SpecialCharTok{|}\NormalTok{ site }\SpecialCharTok{==} \StringTok{\textquotesingle{}MOHK\textquotesingle{}}  \SpecialCharTok{\textasciitilde{}} \StringTok{\textquotesingle{}non\_MPA\textquotesingle{}}\NormalTok{, }\CommentTok{\# non MPA sites }
+\NormalTok{        site }\SpecialCharTok{==} \StringTok{\textquotesingle{}IVEE\textquotesingle{}} \SpecialCharTok{|}\NormalTok{ site }\SpecialCharTok{==} \StringTok{\textquotesingle{}NAPL\textquotesingle{}} \SpecialCharTok{\textasciitilde{}} \StringTok{\textquotesingle{}MPA\textquotesingle{}} \CommentTok{\# MPA sites }
+\NormalTok{))}
+
+\CommentTok{\# Making \textasciigrave{}mpa\textasciigrave{} and \textasciigrave{}treat\textasciigrave{} a factor with 0 / non\_MPA and 1 / MPA}
+\NormalTok{custom\_order }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"non\_MPA"}\NormalTok{, }\StringTok{"MPA"}\NormalTok{)}
+\CommentTok{\#spiny\_counts$mpa \textless{}{-} factor(spiny\_counts$mpa, levels = custom\_order)}
+\NormalTok{spiny\_counts}\SpecialCharTok{$}\NormalTok{treat }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(spiny\_counts}\SpecialCharTok{$}\NormalTok{mpa, }\AttributeTok{levels =}\NormalTok{ custom\_order, }\AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+
+\CommentTok{\# Checking levels of factors }
+\CommentTok{\#levels(spiny\_counts$mpa)}
+\FunctionTok{levels}\NormalTok{(spiny\_counts}\SpecialCharTok{$}\NormalTok{treat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{quote}
+NOTE: This step is crucial to the analysis. Check with a friend or come
+to TA/instructor office hours to make sure the counts are coded
+correctly!
+\end{quote}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 3: Explore \& visualize
+data}\label{step-3-explore-visualize-data}
+
+\textbf{a.} Take a look at the data! Get familiar with the data in each
+\texttt{df} format (\texttt{tidydata}, \texttt{spiny\_counts})
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str}\NormalTok{(tidydata)}
+\FunctionTok{str}\NormalTok{(spiny\_counts)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{b.} We will focus on the variables \texttt{count},
+\texttt{year}, \texttt{site}, and \texttt{treat}(\texttt{mpa}) to model
+lobster abundance. Create the following 4 plots using a different method
+each time from the 6 options provided. Add a layer (\texttt{geom}) to
+each of the plots including informative descriptive statistics (you
+choose; e.g., mean, median, SD, quartiles, range). Make sure each plot
+dimension is clearly labeled (e.g., axes, groups).
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://r-charts.com/distribution/density-plot-group-ggplot2}{Density
+  plot}
+\item
+  \href{https://r-charts.com/distribution/ggridges/}{Ridge plot}
+\item
+  \href{https://ggplot2.tidyverse.org/reference/geom_jitter.html}{Jitter
+  plot}
+\item
+  \href{https://r-charts.com/distribution/violin-plot-group-ggplot2}{Violin
+  plot}
+\item
+  \href{https://r-charts.com/distribution/histogram-density-ggplot2/}{Histogram}
+\item
+  \href{https://r-charts.com/distribution/beeswarm/}{Beeswarm}
+\end{itemize}
+
+Create plots displaying the distribution of lobster \textbf{counts}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\tightlist
+\item
+  grouped by reef site\\
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{color\_palette }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}\#0a6664\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#17BEBBFF\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#D4F4DDFF\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#D62246FF\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#4B1D3FFF\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# Density graph by reef site }
+\NormalTok{spiny\_counts }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{site =} \FunctionTok{factor}\NormalTok{(site, }
+                         \AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"AQUE"}\NormalTok{, }\StringTok{"CARP"}\NormalTok{, }\StringTok{"MOHK"}\NormalTok{, }\StringTok{"IVEE"}\NormalTok{,}\StringTok{"NAPL"}\NormalTok{) }
+\NormalTok{                         )) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ obs\_lob, }\AttributeTok{y =}\NormalTok{ site, }\AttributeTok{fill =}\NormalTok{ site)) }\SpecialCharTok{+} 
+    \FunctionTok{geom\_density\_ridges}\NormalTok{( }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }
+                         \AttributeTok{quantile\_lines =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{theme\_gray}\NormalTok{() }\SpecialCharTok{+} 
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Lobster Counts"}\NormalTok{, }
+         \AttributeTok{y =} \StringTok{"Sites"}\NormalTok{,}
+         \AttributeTok{title =} \StringTok{"California Spiny Lobster Abundance at Sample Sites"}\NormalTok{, }
+         \AttributeTok{caption =} \StringTok{"Source: Reed, 2019"}\NormalTok{) }\SpecialCharTok{+} 
+    \CommentTok{\#scale\_fill\_manual(values = color\_palette) + }
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  grouped by MPA status
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(spiny\_counts, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ mpa, }\AttributeTok{y =}\NormalTok{ obs\_lob, }\AttributeTok{fill =}\NormalTok{ mpa)) }\SpecialCharTok{+} 
+    \FunctionTok{geom\_violin}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}\#488f30\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#ffad76\textquotesingle{}}\NormalTok{)) }\SpecialCharTok{+} 
+    \FunctionTok{theme\_light}\NormalTok{() }\SpecialCharTok{+} 
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{"none"}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{\textquotesingle{}MPA Status\textquotesingle{}}\NormalTok{, }
+         \AttributeTok{y =} \StringTok{\textquotesingle{}Lobster Count\textquotesingle{}}\NormalTok{, }
+         \AttributeTok{title =} \StringTok{\textquotesingle{}California Spiny Lobster Abundance at MPA vs non{-}MPA Sites\textquotesingle{}}\NormalTok{, }
+         \AttributeTok{caption =} \StringTok{"Source: Reed, 2019"}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.06}\NormalTok{, }
+                 \AttributeTok{outlier.size =} \FloatTok{0.55}\NormalTok{, }
+                 \AttributeTok{fill =} \StringTok{"grey90"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  grouped by year
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spiny\_summary }\OtherTok{\textless{}{-}}\NormalTok{ spiny\_counts }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{group\_by}\NormalTok{(year) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{summarise}\NormalTok{(}\AttributeTok{mean\_count =} \FunctionTok{mean}\NormalTok{(obs\_lob))}
+
+
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{data =}\NormalTok{ spiny\_counts,}
+    \AttributeTok{mapping =} \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{factor}\NormalTok{(year), }\AttributeTok{y =}\NormalTok{ obs\_lob,}
+        \AttributeTok{color =} \StringTok{"Observations"}\NormalTok{),}
+    \AttributeTok{width =} \FloatTok{0.25}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{data =}\NormalTok{ spiny\_summary,}
+    \AttributeTok{mapping =} \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{factor}\NormalTok{(year), }\AttributeTok{y =}\NormalTok{ mean\_count,}
+        \AttributeTok{color =} \StringTok{"Mean abundance"}\NormalTok{),}
+    \AttributeTok{width =} \FloatTok{0.25}\NormalTok{,}
+    \AttributeTok{size =} \FloatTok{1.7}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}
+    \AttributeTok{name =} \StringTok{""}\NormalTok{,}
+    \AttributeTok{values =} \FunctionTok{c}\NormalTok{(}
+      \StringTok{"Observations"} \OtherTok{=} \StringTok{"grey15"}\NormalTok{,}
+      \StringTok{"Mean abundance"} \OtherTok{=} \StringTok{"red2"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{x =} \StringTok{"Year"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Lobster Abundance"}\NormalTok{,}
+    \AttributeTok{title =} \StringTok{"California Spiny Lobster Abundance Over Time"}\NormalTok{,}
+    \AttributeTok{caption =} \StringTok{"Source: Reed, 2019"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_grey}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+Create a plot of lobster \textbf{size} :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  You choose the grouping variable(s)!
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate median }
+\NormalTok{median\_group }\OtherTok{\textless{}{-}}\NormalTok{ spiny\_counts }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{group\_by}\NormalTok{(mpa) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{summarise}\NormalTok{(}\AttributeTok{median =} \FunctionTok{median}\NormalTok{(mean\_size, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{.group =}\NormalTok{ drop))}
+
+\CommentTok{\# Plot with medians }
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+} 
+    \FunctionTok{geom\_density}\NormalTok{(}
+        \AttributeTok{data =}\NormalTok{ spiny\_counts,}
+        \AttributeTok{mapping =} \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ mean\_size, }\AttributeTok{fill =}\NormalTok{ mpa),}
+        \AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{data =}\NormalTok{ median\_group,}
+        \AttributeTok{mapping =}\NormalTok{ (}\FunctionTok{aes}\NormalTok{(}\AttributeTok{xintercept =}\NormalTok{ median, }
+                       \AttributeTok{color =}\NormalTok{ mpa)), }
+        \AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"darkgreen"}\NormalTok{, }\StringTok{"darkorange3"}\NormalTok{))}\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"\#488f30"}\NormalTok{, }\StringTok{"\#ffad76"}\NormalTok{)) }\SpecialCharTok{+} 
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Lobster Mean Size (mm)"}\NormalTok{, }
+         \AttributeTok{y =} \StringTok{"Density"}\NormalTok{, }
+         \AttributeTok{title =} \StringTok{"California Spiny Lobster Size in MPA and non{-}MPA Sites"}\NormalTok{, }
+         \AttributeTok{fill =} \StringTok{"MPA Status"}\NormalTok{, }
+         \AttributeTok{color =} \StringTok{"Size Median Values"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{c.} Compare means of the outcome by treatment group. Using the
+\texttt{tbl\_summary()} function from the package
+\href{https://www.danieldsjoberg.com/gtsummary/articles/tbl_summary.html}{\texttt{gt\_summary}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spiny\_counts }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{rename}\NormalTok{(}\AttributeTok{lobster\_count =}\NormalTok{ obs\_lob) }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{    gtsummary}\SpecialCharTok{::}\FunctionTok{tbl\_summary}\NormalTok{(}
+        \AttributeTok{by =}\NormalTok{ treat, }
+        \AttributeTok{include =} \FunctionTok{c}\NormalTok{(lobster\_count, mean\_size, site), }
+        \AttributeTok{statistic =} \FunctionTok{list}\NormalTok{(}\FunctionTok{all\_continuous}\NormalTok{() }\SpecialCharTok{\textasciitilde{}} \StringTok{\textquotesingle{}\{mean\} (\{sd\})\textquotesingle{}}\NormalTok{)}
+\NormalTok{    ) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{add\_p}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+    \CommentTok{\# Add header labels }
+    \FunctionTok{modify\_header}\NormalTok{(label }\SpecialCharTok{\textasciitilde{}} \StringTok{"**Variable**"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{modify\_spanning\_header}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"stat\_1"}\NormalTok{, }\StringTok{"stat\_2"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"**Treatment**"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 4: OLS regression- building
+intuition}\label{step-4-ols-regression--building-intuition}
+
+\textbf{a.} Start with a simple OLS estimator of lobster counts
+regressed on treatment. Use the function \texttt{summ()} from the
+\href{https://jtools.jacob-long.com/}{\texttt{jtools}} package to print
+the OLS output
+
+\textbf{b.} Interpret the intercept \& predictor coefficients \emph{in
+your own words}. Use full sentences and write your interpretation of the
+regression results to be as clear as possible to a non-academic
+audience.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# }\AlertTok{NOTE}\CommentTok{: We will not evaluate/interpret model fit in this assignment (e.g., R{-}square)}
+
+\NormalTok{m1\_ols }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(obs\_lob }\SpecialCharTok{\textasciitilde{}}\NormalTok{ treat, }\AttributeTok{data =}\NormalTok{ spiny\_counts)}
+
+\FunctionTok{summ}\NormalTok{(m1\_ols, }\AttributeTok{model.fit =} \ConstantTok{FALSE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\emph{Intercept:} With no treatment (in a non-MPA site), there is
+expected to be an average of \textasciitilde22.75 lobsters.
+
+\emph{Coefficient Estimation:} With treatment (MPA protection), lobsters
+count is expected to increase by approximately 5.36 lobsters.
+
+\textbf{c.} Check the model assumptions using the \texttt{check\_model}
+function from the \texttt{performance} package
+
+\textbf{d.} Explain the results of the 4 diagnostic plots. Why are we
+getting this result?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{check\_model}\NormalTok{(m1\_ols,  }\AttributeTok{check =} \StringTok{"qq"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{check\_model}\NormalTok{(m1\_ols, }\AttributeTok{check =} \StringTok{"normality"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{check\_model}\NormalTok{(m1\_ols, }\AttributeTok{check =} \StringTok{"homogeneity"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{check\_model}\NormalTok{(m1\_ols, }\AttributeTok{check =} \StringTok{"pp\_check"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+By the \texttt{check\_model} graphs, the data is not normality
+distributed (with a leptokurtic skewed distribution), the residuals are
+not normality distribution, and there is no equal variance
+(heteroscedasticity). The \texttt{check\_model} results are showing the
+data's inherently skewed characteristic. These violate OSL model's
+assumptions.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 5: Fitting GLMs}\label{step-5-fitting-glms}
+
+\textbf{a.} Estimate a \emph{Poisson regression model} using the
+\texttt{glm()} function
+
+\textbf{b.} Interpret the predictor coefficient in your own words. Use
+full sentences and write your interpretation of the results to be as
+clear as possible to a non-academic audience.
+
+\emph{Intercept:} exp(3.12) = 22.64638 \emph{Est coefficient:} exp(0.21)
+= 1.233678 With no treatment (non-MPA locations), the lobster count is
+expected to be \textasciitilde23 on average. With treatment (MPA
+protection), lobster count is expected to increase by 23\% which is
+statistically significant.
+
+\[ 
+# Yield Percent Change
+(exp(estimation) - 1) * 100
+\]
+
+\textbf{c.} Explain the statistical concept of dispersion and
+overdispersion in the context of this model.
+
+Dispersion is when the mean and variance are similar in portion to each
+other. Overdispersion is when there is greater variance than expected
+and thus not proportional to the mean. Poisson is a statistical test
+where mean and variance must be proportional; overdispersion in Poisson
+can cause misleading test statistics and standard errors. A dispersion
+ratio of 67.033 indicates overdispersion which violates the Poisson
+assumption.
+
+\textbf{d.} Compare results with previous model, explain change in the
+significance of the treatment effect
+
+Both models have similar predictions. However, in the OSL model, there
+is no statistical significance in lobster counts between MPA and non-MPA
+sites. In the Poisson model, there is a statistical significance in
+lobster abundance between treatments. The Poisson model is better fitted
+for count data, and therefore give more accurate results.
+
+\textbf{e.} Check the model assumptions. Explain results.
+
+This data have overdispersion (dispersion ration of 67.033) and
+zero-inflation (27 observed zeros) which breaks Poisson model
+assumptions. Therefore, the Poisson model is inappropriate for this data
+set.
+
+\textbf{f.} Conduct tests for over-dispersion \& zero-inflation. Explain
+results.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Poisson model }
+
+\NormalTok{m2\_pois }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(obs\_lob }\SpecialCharTok{\textasciitilde{}}\NormalTok{ treat, }\AttributeTok{data =}\NormalTok{ spiny\_counts, }\AttributeTok{family =} \FunctionTok{poisson}\NormalTok{(}\AttributeTok{link =} \StringTok{"log"}\NormalTok{))}
+
+\FunctionTok{summ}\NormalTok{(m2\_pois, }\AttributeTok{model.fit =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking assumptions}
+\FunctionTok{check\_model}\NormalTok{(m2\_pois)}
+
+\FunctionTok{check\_overdispersion}\NormalTok{(m2\_pois)}
+
+\FunctionTok{check\_zeroinflation}\NormalTok{(m2\_pois)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{g.} Fit a \emph{negative binomial model} using the function
+glm.nb() from the package \texttt{MASS} and check model diagnostics
+
+\textbf{h.} In 1-2 sentences explain rationale for fitting this GLM
+model.
+
+Negative binomial model is more flexible than the Poisson model because
+it accounts for overdispersion by adding a dispersion parameter. Because
+this data has overdispersion, it is more appropriately fitted for the
+negative binomial model.
+
+\textbf{i.} Interpret the treatment estimate result in your own words.
+Compare with results from the previous model.
+
+exp(3.12) = 22.64638 exp(0.21) = 1.233678
+
+In not protected areas, the expected lobster count is \textasciitilde23
+on average. In MPA sites, there is a expected increase of 23\% lobsters,
+but this relationships is not significant.
+
+All models suggest lobster abundance is higher in Marine Protected Areas
+(MPAs). Specifically, the estimations from the poisson and negative
+binomial models are very similar. The P-values are the main difference
+between the models. Poisson shows statistical significance while the
+negative binomal model and linear regression does not. The Poission
+P-value result should be treated with caution because the assumptions
+for Poisson are violated which can lead to misleading P-values.
+Similarly, the linear regession assumptions are violated which can cause
+unreliable results.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Negative Binomal }
+\NormalTok{m3\_nb }\OtherTok{\textless{}{-}} \FunctionTok{glm.nb}\NormalTok{(obs\_lob }\SpecialCharTok{\textasciitilde{}}\NormalTok{ treat, }\AttributeTok{data =}\NormalTok{ spiny\_counts) }\CommentTok{\# \textasciigrave{}glm.nb()\textasciigrave{}  does not require a \textasciigrave{}family\textasciigrave{} argument}
+
+\FunctionTok{summ}\NormalTok{(m3\_nb, }\AttributeTok{model.fit =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{check\_overdispersion}\NormalTok{(m3\_nb)}
+
+\FunctionTok{check\_zeroinflation}\NormalTok{(m3\_nb)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{check\_predictions}\NormalTok{(m3\_nb)}
+
+\FunctionTok{check\_model}\NormalTok{(m3\_nb)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 6: Compare models}\label{step-6-compare-models}
+
+\textbf{a.} Use the \texttt{export\_summ()} function from the
+\texttt{jtools} package to look at the three regression models you fit
+side-by-side.
+
+\textbf{c.} Write a short paragraph comparing the results. Is the
+treatment effect \texttt{robust} or stable across the model
+specifications.
+
+In all three models, the treatment coefficient is positive, meaning
+there is an increases of lobster abundance in the treatment sites (MPAs)
+compared to the untreated (unprotected) areas. Additionally, the
+estimates themselves were all very similar between models. The primary
+distinctions between the models are the P-values and standard
+deviations. The OLS model shows high uncertainty in its positive
+prediction and no statistical significance. The OLS is a poor model for
+the count dataset, seen by the high uncertainty. The Poisson model's
+P-value shows statistical significance. However, the over-dispersion and
+zero-inflated nature of the count data makes Poisson an inadequate
+model. Lastly, the negative binomial accounts for over-dispersion and
+zero values, making the model a more appropriate fit. The negative
+binomial model estimates a positive treatment effect, but no statistical
+significance. In conclusion, the estimates are all consistent. However,
+statistical significance is not robust across all the models
+specifications.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{export\_summs}\NormalTok{(m1\_ols, m2\_pois, m3\_nb,}
+             \AttributeTok{model.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"OLS"}\NormalTok{,}\StringTok{"Poisson"}\NormalTok{, }\StringTok{"NB"}\NormalTok{),}
+             \AttributeTok{statistics =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 7: Building intuition - fixed
+effects}\label{step-7-building-intuition---fixed-effects}
+
+\textbf{a.} Create new \texttt{df} with the \texttt{year} variable
+converted to a factor
+
+\textbf{b.} Run the following negative binomial model using
+\texttt{glm.nb()}
+
+\begin{itemize}
+\tightlist
+\item
+  Add fixed effects for \texttt{year} (i.e., dummy coefficients)
+\item
+  Include an interaction term between variables \texttt{treat} \&
+  \texttt{year} (\texttt{treat*year})
+\end{itemize}
+
+\textbf{c.} Take a look at the regression output. Each coefficient
+provides a comparison or the difference in means for a specific
+sub-group in the data. Informally, describe the what the model has
+estimated at a conceptual level (NOTE: you do not have to interpret
+coefficients individually)
+
+By adding \texttt{year} as an additive and multiplicative variable, we
+are now examining the change of lobster counts in MPA vs non-MPA sites
+\emph{overtime}. The reference year is 2012. The year coefficients are
+the expected average change of lobster abundance from 2012 in
+unprotected sites. The \texttt{treat} coefficient explains the expected
+change of lobster abundance between treatment (MPAs) and non-treatment
+(non-MPA) sites - the effect of the treatment. The interaction between
+the predictors examines if lobster counts in MPAs are changing relative
+to non-MPA sites in each year.
+
+\textbf{d.} Explain why the main effect for treatment is negative? *Does
+this result make sense?
+
+The treatment coefficient examines the change of lobster counts when the
+year is fixed (fixed to the reference year - 2012). The results show, in
+2012, the MPA sites had on average 82\% less lobsters than the non-MPA
+sites. MPA lobster abundance increases in the later years which is seen
+in the interaction terms, not the treatment coefficient. These results
+make sense as MPA are designed to increase biodiversity overtime.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ff\_counts }\OtherTok{\textless{}{-}}\NormalTok{ spiny\_counts }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{year=}\FunctionTok{as\_factor}\NormalTok{(year))}
+    
+\NormalTok{m5\_fixedeffs }\OtherTok{\textless{}{-}} \FunctionTok{glm.nb}\NormalTok{(}
+\NormalTok{    obs\_lob }\SpecialCharTok{\textasciitilde{}} 
+\NormalTok{        treat }\SpecialCharTok{+}
+\NormalTok{        year }\SpecialCharTok{+}
+\NormalTok{        treat}\SpecialCharTok{*}\NormalTok{year,}
+    \AttributeTok{data =}\NormalTok{ ff\_counts)}
+
+\FunctionTok{summ}\NormalTok{(m5\_fixedeffs, }\AttributeTok{model.fit =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{e.} Look at the model predictions: Use the
+\texttt{interact\_plot()} function from package \texttt{interactions} to
+plot mean predictions by year and treatment status.
+
+\textbf{f.} Re-evaluate your responses (c) and (b) above.
+
+My previous explanation of the terms is exemplified in the
+\texttt{interact\_plot()}. In 2012 (the reference year), MPA sites had
+considerably less lobster abundance. As time continued, lobster counts
+increased overall, especially in treatment/protected areas (with a drop
+in the population in 2016 at MPA sites).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# What teacher did }
+\FunctionTok{interact\_plot}\NormalTok{(}\AttributeTok{model =}\NormalTok{ m5\_fixedeffs, }
+              \AttributeTok{pred =}\NormalTok{ year, }\CommentTok{\# Predictor variable}
+              \AttributeTok{modx =}\NormalTok{ treat, }\CommentTok{\# Moderator variable}
+              \AttributeTok{outcome.scale =} \StringTok{"link"}\NormalTok{) }\CommentTok{\# }\AlertTok{NOTE}\CommentTok{: y{-}axis on log{-}scale}
+
+\CommentTok{\# HINT: Change \textasciigrave{}outcome.scale\textasciigrave{} to "response" to convert y{-}axis scale to counts}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{g.} Using \texttt{ggplot()} create a plot in same style as the
+previous \texttt{interaction\ plot}, but displaying the original scale
+of the outcome variable (lobster counts). This type of plot is commonly
+used to show how the treatment effect changes across discrete time
+points (i.e., panel data).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Making the dataframe }
+\NormalTok{plot\_counts }\OtherTok{\textless{}{-}}\NormalTok{ ff\_counts }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{group\_by}\NormalTok{(year, treat) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{summarise}\NormalTok{(}\AttributeTok{mean\_count =} \FunctionTok{mean}\NormalTok{(obs\_lob)) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{ungroup}\NormalTok{()}
+
+\CommentTok{\# Plotting }
+\NormalTok{plot\_counts }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{mpa =} \FunctionTok{recode}\NormalTok{(treat, }\CommentTok{\# Rename mpa characters }
+                        \StringTok{\textasciigrave{}}\AttributeTok{0}\StringTok{\textasciigrave{}} \OtherTok{=} \StringTok{"non{-}MPA"}\NormalTok{, }
+                        \StringTok{\textasciigrave{}}\AttributeTok{1}\StringTok{\textasciigrave{}} \OtherTok{=} \StringTok{"MPA"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ mean\_count, }\AttributeTok{color =}\NormalTok{ mpa, }\AttributeTok{group =}\NormalTok{ mpa)) }\SpecialCharTok{+} \CommentTok{\# plot }
+    \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \DecValTok{1}\NormalTok{)}\SpecialCharTok{+} 
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"\#ffad76"}\NormalTok{, }\StringTok{"\#488f30"}\NormalTok{)) }\SpecialCharTok{+} 
+    \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+} 
+    \FunctionTok{labs}\NormalTok{(}
+        \AttributeTok{title =} \StringTok{"Lobster Abundance Overtime"}\NormalTok{, }
+        \AttributeTok{x =} \StringTok{"Year"}\NormalTok{, }
+        \AttributeTok{y =} \StringTok{"Mean Lobster Count"}\NormalTok{, }
+        \AttributeTok{color =} \StringTok{"MPA Status"}
+\NormalTok{    )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Step 8: Reconsider causal identification
+assumptions}\label{step-8-reconsider-causal-identification-assumptions}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Discuss whether you think \texttt{spillover\ effects} are likely in
+  this research context (see Glossary of terms;
+  \url{https://docs.google.com/document/d/1RIudsVcYhWGpqC-Uftk9UTz3PIq6stVyEpT44EPNgpE/edit?usp=sharing})
+\end{enumerate}
+
+Spillover is when the treatment and control outcomes can impact each
+other - outcomes are not independent of each other. In marine MPA
+situations, spillover is a factor. Marine life does not know MPA extends
+and therefore travel inside and outside the area, impacting lobster
+count in treated and non-treated areas. Spillover effects are strongest
+in the area surrounding the MPA. In this research, the non-MPA area are
+far way from MPAs which makes the spillover effect less intense.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Explain why spillover is an issue for the identification of causal
+  effects.
+\end{enumerate}
+
+Spillover effects make it hard to discover the causal impacts of the
+treatment when the outcomes depend on each other. The intermixing of
+outcomes makes it difficult to disguising the specific cause and effect.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{2}
+\item
+  Discuss the following causal inference assumptions in the context of
+  the MPA treatment effect estimator. Evaluate if each of the assumption
+  are reasonable:
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii})}
+  \tightlist
+  \item
+    SUTVA: Stable Unit Treatment Value assumption
+  \item
+    `Exogeneity' assumption
+  \end{enumerate}
+\end{enumerate}
+
+SUTVA is violated when the control (unprotected) group is affected by
+the treatment group. For biodiversity counts in MPA vs non-MPA
+locations, marine life from the MPAs can travel to non-protected areas,
+affecting the outcomes. Thus, violating the SUTVA assumption.
+Additionally, MPAs can vary in their restrictiveness. Some MPAs are
+no-take zones, while others have restrictions on seasons or gear,
+violating SUTVA's `No hidden variation' parameter.
+
+Exogeneity assumption refer to the outcome error being unbiased.
+However, in a MPA treatment effect estimator, the error can be caused to
+due to MPA placement (MPA location is chosen for a specific reason - not
+randomly selected) or ecological covariates (depth and habitat).
+Therefore, both SUTVA and exogeneity assumptions can be violated when
+studying MPA effectiveness.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{EXTRA CREDIT}\label{extra-credit}
+
+\begin{quote}
+Use the recent lobster abundance data with observations collected up
+until 2024 (\texttt{extracredit\_sblobstrs24.csv}) to run an analysis
+evaluating the effect of MPA status on lobster counts using the same
+focal variables.
+\end{quote}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Create a new script for the analysis on the updated data
+\item
+  Run at least 3 regression models \& assess model diagnostics
+\item
+  Compare and contrast results with the analysis from the 2012-2018 data
+  sample (\textasciitilde{} 2 paragraphs)
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/spiny1.png}}
+
+\end{document}

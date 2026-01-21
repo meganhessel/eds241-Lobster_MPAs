@@ -1,15 +1,17 @@
 ---
 title: "Assignment 1"
 subtitle: "California Spiny Lobster (*Panulirus Interruptus*): Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County" 
-author: "EDS 241 / ESM 244 (**Due: 1/17**)"
+author: "Megan Hessel"
 date: "1/8/26"
-output: 
-    html_document:
-      theme: flatly
+output:
+  html_document:
+    theme: flatly
+  pdf_document:
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval=FALSE, warning = FALSE, message = FALSE )
+#knitr::opts_chunk$set(eval=FALSE, warning = FALSE, message = FALSE )
 ```
 
 ------------------------------------------------------------------------
@@ -81,7 +83,7 @@ Let’s break it down step by step and see what the data reveals! 📊
 
 **a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is ceteris paribus or whether selection bias is likely (be specific!).
 
-There might be some selection bias due to the sites' differing in current intensity and patterns, anthropomorphic activity, and temperature. Point Conception, which is just West of this map, is where the cold, subarctic Northern California current and warm Southern California current meet, creating upwhelling. Therefore, Eastern sites might be warmer and facing more current strength than the Western sites due to the mixing and upwhelling West of Santa Barbara. Additionally, Naples, IV, and Monhawk are closer to the city; therefore, those sites might face more pollution and disturbance. However, while sites differ on other confounding variables, these sites selections are still useful and close to ceters paribus. Control groups are both east and west of the treatment group, minimizing the effect of the different current and temperature pressures. All sites are very close to Santa Barbara. Due to aquatic systems spacial autocorrelation, pollution in one location will most likely be in other locations. Therefore, in this example, there might be some selection bias, but it is pretty close to celeris paribus as locations face similar conditions except MPA status.
+There might be some selection bias due to the sites' differing in current intensity and patterns, anthropomorphic activity, and temperature. Point Conception (which is just West of this map) is where the cold, subarctic Northern California current and warm Southern California current meet, creating upwhelling. Therefore, Eastern sites might be warmer and facing more current strength than the Western sites due to the mixing and upwhelling West of Santa Barbara. Additionally, Naples, IV, and Monhawk are closer to the city; therefore, those sites might face more pollution and disturbance. However, while sites differ on several confounding variables, these sites selections are still useful and close to *ceters paribus*. Control groups are both east and west of the treatment group, minimizing the effect of the different current and temperature pressures. All sites are very close to Santa Barbara. Due to aquatic systems spatial autocorrelation, pollution in one location will most likely be in other locations. Therefore, in this example, there might be some selection bias, but it is pretty close to *celeris paribus* as locations face similar conditions except MPA status.
 
 ------------------------------------------------------------------------
 
@@ -201,7 +203,8 @@ spiny_counts %>%
                          levels = c("AQUE", "CARP", "MOHK", "IVEE","NAPL") 
                          )) %>% 
     ggplot(aes(x = obs_lob, y = site, fill = site)) + 
-    geom_density_ridges( alpha = 0.5) + 
+    geom_density_ridges( alpha = 0.5, 
+                         quantile_lines = TRUE) + 
     theme_gray() + 
     labs(x = "Lobster Counts", 
          y = "Sites",
@@ -241,23 +244,26 @@ spiny_summary <- spiny_counts %>%
 
 
 ggplot() + 
-    geom_jitter(data = spiny_counts, 
-                mapping = aes(x = factor(year), 
-                              y = obs_lob),
-                width = 0.25, 
-                color = "grey15") + 
-    labs(x = "Year", 
-         y = "Lobster Abundance", 
-         title = 'California Spiny Lobster Abundance Overtime', 
-         caption = "Source: Reed, 2019") +
-    geom_jitter(data = spiny_summary, 
-                mapping = aes(x = factor(year), 
-                              y = mean_count),
-                width = 0.25, 
-                color = "red2", 
-                size = 1.7) + 
-        theme_grey() 
-    
+  geom_jitter(data = spiny_counts,
+    mapping = aes(x = factor(year), y = obs_lob,
+        color = "Observations"),
+    width = 0.25) + 
+  geom_jitter(data = spiny_summary,
+    mapping = aes(x = factor(year), y = mean_count,
+        color = "Mean abundance"),
+    width = 0.25,
+    size = 1.7) + 
+  scale_color_manual(
+    name = "",
+    values = c(
+      "Observations" = "grey15",
+      "Mean abundance" = "red2")) +
+  labs(
+    x = "Year",
+    y = "Lobster Abundance",
+    title = "California Spiny Lobster Abundance Over Time",
+    caption = "Source: Reed, 2019") +
+  theme_grey()
 
 ```
 
@@ -328,10 +334,9 @@ summ(m1_ols, model.fit = FALSE)
 
 ```
 
-*Intercept:* With no treatment (in a non-MPA site), there is expected to be an average of ~22.75 lobsters. 
+*Intercept:* With no treatment (in a non-MPA site), there is expected to be an average of \~22.75 lobsters.
 
-*Coefficient Estimation:* With treatment (MPA protection), lobsters count is expected to increase by approximately 5.36 lobsters. 
-
+*Coefficient Estimation:* With treatment (MPA protection), lobsters count is expected to increase by approximately 5.36 lobsters.
 
 **c.** Check the model assumptions using the `check_model` function from the `performance` package
 
@@ -353,8 +358,7 @@ check_model(m1_ols, check = "homogeneity")
 check_model(m1_ols, check = "pp_check")
 ```
 
-
-By the `check_model` graphs, the data is not normality distributed (with a leptokurtic skewed distribution) and there is no equal variance (heterogeneity). These violate OSL model's assumptions. 
+By the `check_model` graphs, the data is not normality distributed (with a leptokurtic skewed distribution), the residuals are not normality distribution, and there is no equal variance (heteroscedasticity). The `check_model` results are showing the data's inherently skewed characteristic. These violate OSL model's assumptions.
 
 ------------------------------------------------------------------------
 
@@ -364,14 +368,14 @@ By the `check_model` graphs, the data is not normality distributed (with a lepto
 
 **b.** Interpret the predictor coefficient in your own words. Use full sentences and write your interpretation of the results to be as clear as possible to a non-academic audience.
 
-exp(3.12) = 22.64638 (intercept)
-exp(0.21) = 1.233678 (est coefficient)
-With no treatment (non-MPA locations), the lobster count is expected to be ~23 on average. With treatment (MPA protection), lobster count is expected to increase by 23% which is statistically significant. 
+*Intercept:* exp(3.12) = 22.64638
+*Est coefficient:* exp(0.21) = 1.233678
+With no treatment (non-MPA locations), the lobster count is expected to be ~23 on average. With treatment (MPA protection), lobster count is expected to increase by 23% which is statistically significant.
 
 $$ 
-# Yield Precent Change
+# Yield Percent Change
 (exp(estimation) - 1) * 100
-$$ 
+$$
 
 **c.** Explain the statistical concept of dispersion and overdispersion in the context of this model.
 
@@ -379,7 +383,7 @@ Dispersion is when the mean and variance are similar in portion to each other. O
 
 **d.** Compare results with previous model, explain change in the significance of the treatment effect
 
-In the OSL model, there is no statistical significance in lobster counts between MPA and non-MPA sites. In the Poisson model, there is a statistical significance in lobster abundance between treatments. The Poisson model is better fitted for count data, and therefore give more accurate results.
+Both models have similar predictions. However, in the OSL model, there is no statistical significance in lobster counts between MPA and non-MPA sites. In the Poisson model, there is a statistical significance in lobster abundance between treatments. The Poisson model is better fitted for count data, and therefore give more accurate results.
 
 **e.** Check the model assumptions. Explain results.
 
@@ -414,13 +418,11 @@ Negative binomial model is more flexible than the Poisson model because it accou
 
 **i.** Interpret the treatment estimate result in your own words. Compare with results from the previous model.
 
-exp(3.12) = 22.64638
-exp(0.21) = 1.233678
+exp(3.12) = 22.64638 exp(0.21) = 1.233678
 
-In not protected areas, the expected lobster count is ~23 on average. In MPA sites, there is a expected increase of 23% lobsters, but this relationships is not significant. 
+In not protected areas, the expected lobster count is \~23 on average. In MPA sites, there is a expected increase of 23% lobsters, but this relationships is not significant.
 
-All models suggest lobster abundance is higher in Marine Protected Areas (MPAs). Specifically, the estimations from the poisson and negative binomial models are very similar. The Pvalues are the main difference between the models. Poisson shows statistical significance while the negative binomal model and linear regression does not. The poission P-value result should be treated with caution because the assumptions for Poisson are violated which can lead to misleading P-values. Similarly, the linear regession assumptions are violated which can cause unreliable results. 
-
+All models suggest lobster abundance is higher in Marine Protected Areas (MPAs). Specifically, the estimations from the poisson and negative binomial models are very similar. The P-values are the main difference between the models. Poisson shows statistical significance while the negative binomal model and linear regression does not. The Poission P-value result should be treated with caution because the assumptions for Poisson are violated which can lead to misleading P-values. Similarly, the linear regession assumptions are violated which can cause unreliable results.
 
 ```{r}
 # Negative Binomal 
@@ -428,6 +430,7 @@ m3_nb <- glm.nb(obs_lob ~ treat, data = spiny_counts) # `glm.nb()`  does not req
 
 summ(m3_nb, model.fit = FALSE)
 ```
+
 ```{r}
 check_overdispersion(m3_nb)
 
@@ -448,7 +451,7 @@ check_model(m3_nb)
 
 **c.** Write a short paragraph comparing the results. Is the treatment effect `robust` or stable across the model specifications.
 
-In all three models, the treatment coefficient is positive, meaning there is an increases of lobster abundance in the treatment sites (MPAs) compared to the untreated (unprotected) areas. Additionally, the estimates themselves were all very similar between models. The primary distinctions between the models are the P-values and standard deviations. The OLS model shows high uncertainty in its positive prediction and no statistical significance. The OLS is a poor model for the count dataset, seen by the high uncertainty. The Poisson model's p-value shows statistical significance. However, the over-dispersion and zero-inflated nature of the count data makes Poisson an inadequate model. Lastly, the negative binomial accounts for over-dispersion and zero values, making the model a more appropriate fit. The negative binomial model estimates a positive treatment effect, but no statistical significance. In conclusion, the estimates are all consistent. However, statistical significance is not robust across all the models specifications.
+In all three models, the treatment coefficient is positive, meaning there is an increases of lobster abundance in the treatment sites (MPAs) compared to the untreated (unprotected) areas. Additionally, the estimates themselves were all very similar between models. The primary distinctions between the models are the P-values and standard deviations. The OLS model shows high uncertainty in its positive prediction and no statistical significance. The OLS is a poor model for the count dataset, seen by the high uncertainty. The Poisson model's P-value shows statistical significance. However, the over-dispersion and zero-inflated nature of the count data makes Poisson an inadequate model. Lastly, the negative binomial accounts for over-dispersion and zero values, making the model a more appropriate fit. The negative binomial model estimates a positive treatment effect, but no statistical significance. In conclusion, the estimates are all consistent. However, statistical significance is not robust across all the models specifications.
 
 ```{r}
 export_summs(m1_ols, m2_pois, m3_nb,
@@ -472,10 +475,9 @@ export_summs(m1_ols, m2_pois, m3_nb,
 
 By adding `year` as an additive and multiplicative variable, we are now examining the change of lobster counts in MPA vs non-MPA sites *overtime*. The reference year is 2012. The year coefficients are the expected average change of lobster abundance from 2012 in unprotected sites. The `treat` coefficient explains the expected change of lobster abundance between treatment (MPAs) and non-treatment (non-MPA) sites - the effect of the treatment. The interaction between the predictors examines if lobster counts in MPAs are changing relative to non-MPA sites in each year.
 
-
 **d.** Explain why the main effect for treatment is negative? \*Does this result make sense?
 
-The treatment coefficient examines the change of lobster counts when the year is fixed (fixed to the reference year - 2012). The results show, in 2012, the MPA sites had on average 82% less lobsters than the non-MPA sites. MPA lobster abundance increases in the later years which is seen in the interaction terms, not the treatment coefficient. These results make sense as MPA are designed to increase biodiversity overtime. 
+The treatment coefficient examines the change of lobster counts when the year is fixed (fixed to the reference year - 2012). The results show, in 2012, the MPA sites had on average 82% less lobsters than the non-MPA sites. MPA lobster abundance increases in the later years which is seen in the interaction terms, not the treatment coefficient. These results make sense as MPA are designed to increase biodiversity overtime.
 
 ```{r}
 
@@ -496,7 +498,7 @@ summ(m5_fixedeffs, model.fit = FALSE)
 
 **f.** Re-evaluate your responses (c) and (b) above.
 
-My previous explanation of the terms is exemplified in the `interact_plot()`. In 2012 (the reference year), MPA sites had considerably less lobster abundance. As time continued, lobster counts increased overall, especially in treatment/protected areas (with a drop in the population in 2016 at MPA sites). 
+My previous explanation of the terms is exemplified in the `interact_plot()`. In 2012 (the reference year), MPA sites had considerably less lobster abundance. As time continued, lobster counts increased overall, especially in treatment/protected areas (with a drop in the population in 2016 at MPA sites).
 
 ```{r}
 
@@ -543,14 +545,21 @@ plot_counts %>%
 
 a.  Discuss whether you think `spillover effects` are likely in this research context (see Glossary of terms; <https://docs.google.com/document/d/1RIudsVcYhWGpqC-Uftk9UTz3PIq6stVyEpT44EPNgpE/edit?usp=sharing>)
 
-b.  Explain why spillover is an issue for the identification of causal effects
+Spillover is when the treatment and control outcomes can impact each other - outcomes are not independent of each other. In marine MPA situations, spillover is a factor. Marine life does not know MPA extends and therefore travel inside and outside the area, impacting lobster count in treated and non-treated areas. Spillover effects are strongest in the area surrounding the MPA. In this research, the non-MPA area are far way from MPAs which makes the spillover effect less intense.
 
-c.  How does spillover relate to impact in this research setting?
+b.  Explain why spillover is an issue for the identification of causal effects. 
 
-d.  Discuss the following causal inference assumptions in the context of the MPA treatment effect estimator. Evaluate if each of the assumption are reasonable:
+Spillover effects make it hard to discover the causal impacts of the treatment when the outcomes depend on each other. The intermixing of outcomes makes it difficult to disguising the specific cause and effect.
+
+c.  Discuss the following causal inference assumptions in the context of the MPA treatment effect estimator. Evaluate if each of the assumption are reasonable:
 
     1)  SUTVA: Stable Unit Treatment Value assumption
-    2)  Excludability assumption
+    2)  'Exogeneity' assumption
+
+SUTVA is violated when the control (unprotected) group is affected by the treatment group. For biodiversity counts in MPA vs non-MPA locations, marine life from the MPAs can travel to non-protected areas, affecting the outcomes. Thus, violating the SUTVA assumption. Additionally, MPAs can vary in their restrictiveness. Some MPAs are no-take zones, while others have restrictions on seasons or gear, violating SUTVA's 'No hidden variation' parameter. 
+
+Exogeneity assumption refer to the outcome error being unbiased. However, in a MPA treatment effect estimator, the error can be caused to due to MPA placement (MPA location is chosen for a specific reason - not randomly selected) or ecological covariates (depth and habitat). Therefore, both SUTVA and exogeneity assumptions can be violated when studying MPA effectiveness. 
+
 
 ------------------------------------------------------------------------
 
