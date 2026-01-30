@@ -83,7 +83,9 @@ Let’s break it down step by step and see what the data reveals! 📊
 
 **a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is ceteris paribus or whether selection bias is likely (be specific!).
 
-There might be some selection bias due to the sites' differing in current intensity and patterns, anthropomorphic activity, and temperature. Point Conception (which is just West of this map) is where the cold, subarctic Northern California current and warm Southern California current meet, creating upwhelling. Therefore, Eastern sites might be warmer and facing more current strength than the Western sites due to the mixing and upwhelling West of Santa Barbara. Additionally, Naples, IV, and Monhawk are closer to the city; therefore, those sites might face more pollution and disturbance. However, while sites differ on several confounding variables, these sites selections are still useful and close to *ceters paribus*. Control groups are both east and west of the treatment group, minimizing the effect of the different current and temperature pressures. All sites are very close to Santa Barbara. Due to aquatic systems spatial autocorrelation, pollution in one location will most likely be in other locations. Therefore, in this example, there might be some selection bias, but it is pretty close to *celeris paribus* as locations face similar conditions except MPA status.
+There is some selection bias due to the sites' differing in several ways, such as current intensity and patterns, anthropomorphic activity, and temperature. Point Conception (which is just West of this map) is where the cold, subarctic Northern California current and warm Southern California current meet, creating upwhelling. Therefore, Eastern sites might be warmer and facing more current strength than the Western sites due to the mixing and upwhelling West of Santa Barbara. Additionally, Naples, IV, and Monhawk are closer to the city, possibly facing more pollution and disturbance. Furthermore, Naples and Isla Vista were given MPA status in January 2012 by the California Department of Fish and Game. These site locations are purposely selected in order to help conservation efforts in Santa Barbara fisheries. Therefore, these control and treatment sites are not *ceters paribus* as they may face different abiotic and biotic pressures and are not randomly selected. These various confounding variables mean the control group is not a good counterfactual.
+
+While sites differ on several confounding variables, these sites selections are still useful to study and close to ceters paribus. Control groups are both east and west of the treatment group, minimizing the effect of the different current and temperature pressures. All sites are very close to Santa Barbara. Due to aquatic system's spatial autocorrelation, pollution in one location will most likely be in other locations. Therefore, in this example, there is selection bias, but locations face similar conditions (except MPA status) which make this research helpful in understanding impact of MPAs on California Spiny Lobster (*Panulirus Interruptus*).
 
 ------------------------------------------------------------------------
 
@@ -204,14 +206,23 @@ spiny_counts %>%
                          )) %>% 
     ggplot(aes(x = obs_lob, y = site, fill = site)) + 
     geom_density_ridges( alpha = 0.5, 
-                         quantile_lines = TRUE) + 
+                         quantile_lines = TRUE, # draw vertical lines at quantile positions 
+                         quantiles = 2 # median split
+                         ) + 
     theme_gray() + 
     labs(x = "Lobster Counts", 
          y = "Sites",
          title = "California Spiny Lobster Abundance at Sample Sites", 
          caption = "Source: Reed, 2019") + 
     #scale_fill_manual(values = color_palette) + 
-    theme(legend.position="none")
+    theme(legend.position="none") + 
+    annotate("label",
+    x = 0.8, y = 5.7,        # position of the annotation
+    label = "Vertical line = Median",
+    hjust = -2.3,
+    size = 4,
+    color = "black"
+  )
     
 
 ```
@@ -368,9 +379,7 @@ By the `check_model` graphs, the data is not normality distributed (with a lepto
 
 **b.** Interpret the predictor coefficient in your own words. Use full sentences and write your interpretation of the results to be as clear as possible to a non-academic audience.
 
-*Intercept:* exp(3.12) = 22.64638
-*Est coefficient:* exp(0.21) = 1.233678
-With no treatment (non-MPA locations), the lobster count is expected to be ~23 on average. With treatment (MPA protection), lobster count is expected to increase by 23% which is statistically significant.
+*Intercept:* exp(3.12) = 22.64638 *Est coefficient:* exp(0.21) = 1.233678 With no treatment (non-MPA locations), the lobster count is expected to be \~23 on average. With treatment (MPA protection), lobster count is expected to increase by 23% which is statistically significant.
 
 $$ 
 # Yield Percent Change
@@ -545,21 +554,24 @@ plot_counts %>%
 
 a.  Discuss whether you think `spillover effects` are likely in this research context (see Glossary of terms; <https://docs.google.com/document/d/1RIudsVcYhWGpqC-Uftk9UTz3PIq6stVyEpT44EPNgpE/edit?usp=sharing>)
 
-Spillover is when the treatment and control outcomes can impact each other - outcomes are not independent of each other. In marine MPA situations, spillover is a factor. Marine life does not know MPA extends and therefore travel inside and outside the area, impacting lobster count in treated and non-treated areas. Spillover effects are strongest in the area surrounding the MPA. In this research, the non-MPA area are far way from MPAs which makes the spillover effect less intense.
+Spillover is when the treatment and control outcomes can impact each other - outcomes are not independent of each other. In marine MPA situations, spillover is a factor. Marine life does not know MPA extents and therefore travel inside and outside the area, impacting lobster count in treated and non-treated areas. Spillover effects are strongest in the area surrounding the MPA. In this research, the non-MPA area are far way from MPAs which makes the spillover effect less intense.
 
-b.  Explain why spillover is an issue for the identification of causal effects. 
+b.  Explain why spillover is an issue for the identification of causal effects.
 
 Spillover effects make it hard to discover the causal impacts of the treatment when the outcomes depend on each other. The intermixing of outcomes makes it difficult to disguising the specific cause and effect.
 
-c.  Discuss the following causal inference assumptions in the context of the MPA treatment effect estimator. Evaluate if each of the assumption are reasonable:
+**c. How does spillover relate to impact in this research setting?**
+
+In concept, MPAs, being safe-havens for marine life, would increase fish (and lobster) biomass. Because marine life travels in and out of the MPAs, the positive effects of MPAs cross into non-MPA zones (known as spillover effect). When comparing lobster abundance in MPA and non-MPA zones, the spillover effect can add lobster counts in treated [and]{.underline} non-treated sites, making the MPA zones look less effective than they are in reality.
+
+d.  Discuss the following causal inference assumptions in the context of the MPA treatment effect estimator. Evaluate if each of the assumption are reasonable:
 
     1)  SUTVA: Stable Unit Treatment Value assumption
     2)  'Exogeneity' assumption
 
-SUTVA is violated when the control (unprotected) group is affected by the treatment group. For biodiversity counts in MPA vs non-MPA locations, marine life from the MPAs can travel to non-protected areas, affecting the outcomes. Thus, violating the SUTVA assumption. Additionally, MPAs can vary in their restrictiveness. Some MPAs are no-take zones, while others have restrictions on seasons or gear, violating SUTVA's 'No hidden variation' parameter. 
+SUTVA has two assumptions: (1) no interference and (2) consistency. No interference is violated when the control (unprotected) group is affected by the treatment group. For biodiversity counts in MPA vs non-MPA locations, marine life from the MPAs can travel to non-protected areas, affecting the outcomes. Thus, violating the SUTVA assumption. Consistent assumption is violated as MPAs can vary in their restrictiveness. Some MPAs are no-take zones, while others have restrictions on seasons or gear, violating SUTVA's 'No hidden variation' parameter. Thus, both SUTVA assumptions are not met.
 
-Exogeneity assumption refer to the outcome error being unbiased. However, in a MPA treatment effect estimator, the error can be caused to due to MPA placement (MPA location is chosen for a specific reason - not randomly selected) or ecological covariates (depth and habitat). Therefore, both SUTVA and exogeneity assumptions can be violated when studying MPA effectiveness. 
-
+Exogeneity assumption refer to the outcome error being unbiased. However, in a MPA treatment effect estimator, the error can be caused to due to MPA placement (MPA location is chosen for a specific reason - not randomly selected) or ecological covariates (depth and habitat). Therefore, both SUTVA and exogeneity assumptions can be violated when studying MPA effectiveness.
 
 ------------------------------------------------------------------------
 
